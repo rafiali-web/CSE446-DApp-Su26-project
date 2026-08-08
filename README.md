@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # BountyPulse
 
 BountyPulse is a local Web3 DApp project for the Summer 2026 DApp assignment.
@@ -41,3 +42,6 @@ forge build
 6. Build Pinata/IPFS helper
 7. Build Ethers.js frontend
 8. Add real-time event syncing
+=======
+# CSE446-DApp-Su26-project
+>>>>>>> 09b7dad40ccf3f938c98c321e5c954a73a39cf0c

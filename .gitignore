@@ -1,0 +1,5 @@
+pinata-server/.env
+pinata-server/node_modules/
+cache/
+out/
+broadcast/

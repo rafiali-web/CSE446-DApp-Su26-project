@@ -1,0 +1,130 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BountyPulse</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main>
+
+        <h1>BountyPulse</h1>
+
+        <p>Decentralized Micro-Bounty & Escrow</p>
+
+        <!-- =========================
+             WALLET CONNECTION
+        ========================== -->
+
+        <section>
+
+            <h2>Wallet Connection</h2>
+
+            <button id="connectWallet">
+                Connect MetaMask
+            </button>
+
+            <p id="walletAddress">
+                Wallet not connected
+            </p>
+
+            <p id="networkStatus">
+                Network: Not connected
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             IPFS UPLOAD
+        ========================== -->
+
+        <section>
+
+            <h2>IPFS Metadata Upload</h2>
+
+            <p>
+                Select an image or file to upload to IPFS using Pinata.
+            </p>
+
+            <input
+                type="file"
+                id="fileInput"
+                accept="image/*,.txt,.pdf"
+            >
+
+            <br><br>
+
+            <button id="uploadFile">
+                Upload to IPFS
+            </button>
+
+            <p id="uploadStatus">
+                No file uploaded.
+            </p>
+
+            <p>
+                <strong>IPFS CID:</strong>
+            </p>
+
+            <p id="ipfsCid">
+                -
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             BLOCKCHAIN CID
+        ========================== -->
+
+        <section>
+
+            <h2>Blockchain Metadata</h2>
+
+            <p>
+                The CID obtained from Pinata will be used as the
+                bounty metadata reference.
+            </p>
+
+            <label for="bountyDetailsCid">
+                Bounty Details CID:
+            </label>
+
+            <input
+                type="text"
+                id="bountyDetailsCid"
+                placeholder="IPFS CID will appear here"
+                readonly
+            >
+
+        </section>
+
+    </main>
+
+
+    <!-- Ethers.js -->
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.15.0/dist/ethers.umd.min.js"></script>
+
+
+    <!-- IPFS helper -->
+
+    <script src="ipfsHelper.js"></script>
+
+
+    <!-- Main application -->
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
+```

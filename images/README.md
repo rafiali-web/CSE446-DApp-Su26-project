@@ -2,7 +2,7 @@
 
 Drop the demo captures here using the exact filenames below. The root
 `README.md` already references every one of them, so a screenshot renders as
-soon as the file exists. Nothing else needs editing.
+soon as the file exists. 
 
 | Filename | What to capture |
 |---|---|
@@ -16,13 +16,3 @@ soon as the file exists. Nothing else needs editing.
 | `08-unclaimed-earnings.png` | The sidebar earnings tracker showing a non-zero balance with the "Claim" button enabled. |
 | `09-live-sync-two-windows.png` | Two browser windows side by side on different accounts, where an action in one has already updated the other. This is the checkpoint-5 proof, so make the difference obvious. |
 
-## Guidance
-
-- **PNG** is preferred; `.jpg`, `.jpeg`, `.webp` and `.gif` also render.
-- Capture at a window width of at least 1280px so the two-column layout and the
-  sidebar are both visible.
-- These files are **tracked** in git. `.gitignore` carries explicit negations for
-  this directory precisely so no broad ignore rule swallows them.
-- Keep each file under roughly 1 MB. Screenshots live in git history forever.
-- Redact nothing but the obvious: local Anvil accounts are public test keys, but
-  crop out any real browser tabs, bookmarks or other windows.

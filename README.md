@@ -26,9 +26,9 @@
 
 ## Demo
 
-Screenshots live in [`images/`](images/). Drop a capture in with the filename below and it
-renders here automatically — see [`images/README.md`](images/README.md) for the shot list and
-the naming contract.
+![Landing page ](images/0-landing-page.png) 
+
+Landing page
 
 ### Registration and role selection
 

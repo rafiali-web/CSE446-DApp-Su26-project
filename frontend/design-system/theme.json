@@ -1,0 +1,245 @@
+{
+  "$comment": [
+    "Machine-readable record of the Classical design system. This file and the",
+    ":root block at the top of styles.css describe the SAME parameters and must",
+    "be changed together: if they disagree, the system has started to rot.",
+    "Ramps were generated in OKLCH on one shared perceptual lightness scale, so",
+    "the same step of any ramp carries the same visual weight."
+  ],
+  "name": "Classical",
+  "version": "1.0.0",
+  "stylesheet": "frontend/design-system/styles.css",
+  "direction": "Editorial and book-like on a soft near-white ground. Justified body copy at a comfortable measure, headlines flush-left over the block, hairline rules carrying the structure. Colour is applied as stroke, not fill. Surfaces stay quiet: cards bordered, buttons outlined. Photographs matted like tipped-in plates.",
+
+  "rules": {
+    "strokeNotFill": "Colour appears as borders, rules and underlines. No component takes a solid accent fill, including .btn-primary.",
+    "noBold": "Interface headings cap at fontWeights.heading (600). Display sizes take fontWeights.display (400): the bigger the text, the lighter it sets.",
+    "noRawUnits": "Use the space and radius scales. Raw px appears only inside :root.",
+    "elevation": "Only shadows.sm / md / lg. Elevation is a whisper.",
+    "figures": "Tabular figures wherever numbers stand as figures or columns (kickers, contents numerals, tables, charts, display numerals). Running prose keeps text figures: Lora's tabular feature widens word spaces and punctuation, which would loosen justified copy.",
+    "icons": "Lucide (https://lucide.dev), inlined as stroke SVG. No emoji, ever.",
+    "contrast": "The accent-to-ground pair is tuned to at least 3:1, which covers icons, large text and interface chrome and NOT body copy. Paragraph-size text in the accent uses colors.accentText (--color-accent-700)."
+  },
+
+  "anchors": {
+    "bg": {"hex": "#f3f2f2", "oklch": {"L": 0.9619, "C": 0.0011, "H": 17.18}},
+    "text": {"hex": "#201f1d", "oklch": {"L": 0.2396, "C": 0.004, "H": 84.59}},
+    "accent": {"hex": "#b68235", "oklch": {"L": 0.6443, "C": 0.1123, "H": 73.77}}
+  },
+
+  "colors": {
+    "bg": "var(--color-bg)",
+    "text": "var(--color-text)",
+    "accent": "var(--color-accent)",
+    "surface": "var(--color-neutral-100)",
+    "surfaceSunken": "var(--color-neutral-200)",
+    "textMuted": "var(--color-neutral-700)",
+    "textSubtle": "var(--color-neutral-600)",
+    "divider": "var(--color-neutral-300)",
+    "border": "var(--color-neutral-400)",
+    "accentText": "var(--color-accent-700)"
+  },
+
+  "ramps": {
+    "$comment": "Steps 100-300 are tinted fills, hovers and subtle borders; 500 is the role base; 700-900 are text on tinted fills and pressed states. Prefer a ramp step over an ad-hoc color-mix().",
+    "generation": {
+      "space": "oklch",
+      "lightnessScale": {
+        "$comment": "Shared across every role. Step 500 is pinned to the accent's own OKLCH lightness.",
+        "100": 0.972,
+        "200": 0.936,
+        "300": 0.883,
+        "400": 0.79,
+        "500": 0.6443,
+        "600": 0.5693,
+        "700": 0.4793,
+        "800": 0.3793,
+        "900": 0.2793
+      },
+      "chromaEnvelope": {
+        "$comment": "Chroma cannot hold flat across a ramp: near white and near black the sRGB gamut has none to give. Multipliers on the role's base chroma.",
+        "100": 0.22,
+        "200": 0.38,
+        "300": 0.6,
+        "400": 0.85,
+        "500": 1,
+        "600": 0.98,
+        "700": 0.86,
+        "800": 0.7,
+        "900": 0.52
+      },
+      "gamutMapping": "Chroma is reduced by bisection until the colour is inside sRGB. Lightness and hue are preserved exactly; clipping RGB channels instead would shift both and break the shared scale."
+    },
+
+    "neutral": {
+      "role": "The ground's own hue at a whisper of chroma (0.006), so a neutral tint never reads cold against the near-white paper.",
+      "hue": 17.18,
+      "baseChroma": 0.006,
+      "steps": {
+        "100": {"hex": "#f7f5f5", "oklch": [0.972, 0.0013, 17.18]},
+        "200": {"hex": "#ebe9e9", "oklch": [0.936, 0.0023, 17.18]},
+        "300": {"hex": "#dbd7d7", "oklch": [0.883, 0.0036, 17.18]},
+        "400": {"hex": "#beb9b9", "oklch": [0.79, 0.0051, 17.18]},
+        "500": {"hex": "#918c8c", "oklch": [0.6443, 0.006, 17.18]},
+        "600": {"hex": "#7b7676", "oklch": [0.5693, 0.0059, 17.18]},
+        "700": {"hex": "#605c5c", "oklch": [0.4793, 0.0052, 17.18]},
+        "800": {"hex": "#444141", "oklch": [0.3793, 0.0042, 17.18]},
+        "900": {"hex": "#2a2828", "oklch": [0.2793, 0.0031, 17.18]}
+      }
+    },
+
+    "accent": {
+      "role": "The single brand colour.",
+      "hue": 73.77,
+      "baseChroma": 0.1123,
+      "steps": {
+        "100": {"hex": "#fff4e6", "oklch": [0.972, 0.0218, 73.77]},
+        "200": {"hex": "#fce6cb", "oklch": [0.936, 0.0427, 73.77]},
+        "300": {"hex": "#f4d2a8", "oklch": [0.883, 0.0674, 73.77]},
+        "400": {"hex": "#e0b174", "oklch": [0.79, 0.0955, 73.77]},
+        "500": {"hex": "#b68235", "oklch": [0.6443, 0.1123, 73.77]},
+        "600": {"hex": "#9d6c1c", "oklch": [0.5693, 0.1101, 73.77]},
+        "700": {"hex": "#7d540d", "oklch": [0.4793, 0.0966, 73.77]},
+        "800": {"hex": "#5b3b03", "oklch": [0.3793, 0.0786, 73.77]},
+        "900": {"hex": "#3a2301", "oklch": [0.2793, 0.0584, 73.77]}
+      }
+    },
+
+    "accent-2": {
+      "role": "MACHINE-DERIVED STAND-IN. The scheme is mono: it has exactly one accent. This set exists only so that any rule referring to accent-2 still resolves. It is the accent's hue nudged +6 degrees at 0.86 chroma, which keeps it a sibling rather than a second brand colour. Treat accent and accent-2 as ONE role.",
+      "derivedFrom": "accent",
+      "hue": 79.77,
+      "baseChroma": 0.0966,
+      "steps": {
+        "100": {"hex": "#fef5e6", "oklch": [0.972, 0.0213, 79.77]},
+        "200": {"hex": "#f7e8cf", "oklch": [0.936, 0.0367, 79.77]},
+        "300": {"hex": "#edd5ae", "oklch": [0.883, 0.058, 79.77]},
+        "400": {"hex": "#d7b57e", "oklch": [0.79, 0.0821, 79.77]},
+        "500": {"hex": "#ac8744", "oklch": [0.6443, 0.0966, 79.77]},
+        "600": {"hex": "#94702e", "oklch": [0.5693, 0.0947, 79.77]},
+        "700": {"hex": "#76581f", "oklch": [0.4793, 0.0831, 79.77]},
+        "800": {"hex": "#553e11", "oklch": [0.3793, 0.0676, 79.77]},
+        "900": {"hex": "#362507", "oklch": [0.2793, 0.0502, 79.77]}
+      }
+    }
+  },
+
+  "contrastAudit": {
+    "$comment": "WCAG 2.1 relative-luminance ratios against the ground #f3f2f2, measured from the hex values above.",
+    "text-on-bg": {"ratio": 14.74, "minimum": 4.5, "verdict": "pass"},
+    "accent-on-bg": {"ratio": 3.02, "minimum": 3.0, "verdict": "pass", "note": "Chrome, icons and large text only. Not body copy."},
+    "accent-600-on-bg": {"ratio": 4.09, "minimum": 3.0, "verdict": "pass"},
+    "accent-700-on-bg": {"ratio": 5.97, "minimum": 4.5, "verdict": "pass", "note": "This is the body-copy accent."},
+    "accent-800-on-bg": {"ratio": 9.07, "minimum": 4.5, "verdict": "pass"},
+    "neutral-700-on-bg": {"ratio": 5.9, "minimum": 4.5, "verdict": "pass"},
+    "neutral-800-on-neutral-100": {"ratio": 9.3, "minimum": 4.5, "verdict": "pass"},
+    "accent-800-on-accent-100": {"ratio": 9.33, "minimum": 4.5, "verdict": "pass"},
+    "accent-2-800-on-accent-2-100": {"ratio": 9.32, "minimum": 4.5, "verdict": "pass"}
+  },
+
+  "typography": {
+    "families": {
+      "heading": {
+        "primary": "Cormorant Garamond",
+        "stack": "\"Cormorant Garamond\", \"EB Garamond\", Garamond, \"Palatino Linotype\", Palatino, Georgia, \"Times New Roman\", serif"
+      },
+      "body": {
+        "primary": "Lora",
+        "stack": "\"Lora\", Georgia, Cambria, \"Times New Roman\", Times, serif"
+      },
+      "mono": {
+        "stack": "\"SFMono-Regular\", \"SF Mono\", ui-monospace, Menlo, Consolas, \"Liberation Mono\", monospace"
+      },
+      "loading": "@import at the top of styles.css, so the one stylesheet is self-contained. The fallback stacks are real: offline the page still sets in a Garamond-adjacent and a serif text face."
+    },
+    "weights": {
+      "normal": 400,
+      "medium": 500,
+      "heading": 600,
+      "display": 400,
+      "$comment": "Bold is avoided. 600 is the ceiling for interface headings and display sizes deliberately take the normal cut."
+    },
+    "sizes": {
+      "2xs": "0.75rem",
+      "xs": "0.8125rem",
+      "sm": "0.9375rem",
+      "base": "1.0625rem",
+      "md": "1.1875rem",
+      "lg": "1.5rem",
+      "xl": "2rem",
+      "2xl": "2.75rem",
+      "display": "3.75rem"
+    },
+    "leading": {"tight": 1.15, "snug": 1.3, "body": 1.62, "loose": 1.78},
+    "tracking": {"tight": "-0.01em", "normal": "0", "wide": "0.04em", "kicker": "0.14em"},
+    "measure": {"default": "68ch", "narrow": "52ch"},
+    "figures": {"tabular": "\"tnum\" 1, \"lnum\" 1"}
+  },
+
+  "space": {
+    "$comment": "4px base at a density of 1.15, so one step is 4.6px. Airy by design. Use the scale, never a raw px.",
+    "base": "4px",
+    "density": 1.15,
+    "scale": {
+      "1": "0.2875rem",
+      "2": "0.575rem",
+      "3": "0.8625rem",
+      "4": "1.15rem",
+      "5": "1.4375rem",
+      "6": "1.725rem",
+      "8": "2.3rem",
+      "10": "2.875rem",
+      "12": "3.45rem",
+      "16": "4.6rem"
+    }
+  },
+
+  "radius": {
+    "base": "4px",
+    "scale": {"sm": "2px", "md": "4px", "lg": "8px", "xl": "12px", "pill": "999px"}
+  },
+
+  "shadows": {
+    "sm": "0 1px 2px rgba(32, 31, 29, 0.05)",
+    "md": "0 2px 6px rgba(32, 31, 29, 0.07), 0 1px 2px rgba(32, 31, 29, 0.04)",
+    "lg": "0 6px 20px rgba(32, 31, 29, 0.1), 0 2px 6px rgba(32, 31, 29, 0.05)"
+  },
+
+  "lines": {"hairline": "1px", "ruleEmphasis": "2px"},
+
+  "motion": {
+    "durations": {"fast": "90ms", "base": "160ms"},
+    "easing": "cubic-bezier(0.2, 0, 0.2, 1)",
+    "reducedMotion": "All animation and transition durations collapse under prefers-reduced-motion: reduce."
+  },
+
+  "interactionStates": {
+    "$comment": "Built once at the system level in section 6 of styles.css. Never restyled per page.",
+    "hover": "Every interactive element takes a tint from a light ramp step.",
+    "pressed": "One step past the base on the accent ramp: --color-accent-600 on this light ground, --color-accent-400 on dark, and a color-mix() tint for outlined and ghost variants that have no fill to darken.",
+    "focusVisible": ":focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; } - never the default blue ring.",
+    "selection": "::selection is an accent tint (--color-accent-200 on --color-accent-900).",
+    "disabled": "45% opacity, not-allowed cursor, and no pointer response."
+  },
+
+  "components": {
+    "btn": {
+      "variants": [".btn-primary", ".btn-secondary", ".btn-ghost", ".btn-icon", ".btn-block"],
+      "sizes": [".btn-sm", ".btn-lg"],
+      "note": "Primary is an accent OUTLINE, never a fill."
+    },
+    "tag": {"variants": [".tag-accent", ".tag-accent-2", ".tag-neutral", ".tag-outline"], "note": "Light ramp step as the fill, matching dark step as the text."},
+    "field": {"parts": ["label", ".input", ".radio + .dot", ".seg + .seg-opt"], "note": "Native elements throughout. No script."},
+    "card": {"parts": [".card-kicker", ".card-title", ".card-body", ".card-meta", ".card-head", ".card-actions"], "utilities": [".elev-sm", ".elev-md", ".elev-lg"], "note": "Bordered, unfilled."},
+    "nav": {"parts": [".nav-brand", ".nav-spacer"]},
+    "table": {"parts": ["caption", "th", "td", ".num", ".row-marked"]},
+    "dialog": {"parts": [".dialog-backdrop", ".dialog", ".dialog-title", ".dialog-body", ".dialog-actions"]},
+    "hr": {"variants": [".hr-tight"]},
+    "plate": {"variants": [".plate-inline"], "note": "A warm archival grade inside a thin surface-coloured mat. Every content photograph goes through it."}
+  },
+
+  "notBuilt": {
+    "$comment": "Deliberately out of scope for this package; the token sheet, component layer and the rebuilt DApp are the deliverable.",
+    "items": ["foundations/*.html", "components/*.html", "templates/", "thumbnail.html"]
+  }
+}

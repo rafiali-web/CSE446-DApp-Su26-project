@@ -1,0 +1,29 @@
+{
+  "name": "bountypulse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Decentralized micro-bounty and escrow platform: Solidity settlement layer, IPFS storage layer, vanilla-JS DApp on Ethers.js v6.",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "setup": "./setup.sh",
+    "chain": "./scripts/start-anvil.sh",
+    "deploy": "./scripts/deploy-local.sh",
+    "serve": "./scripts/serve-frontend.sh",
+    "build": "forge build",
+    "test": "forge test -vv",
+    "test:gas": "forge test --gas-report",
+    "fmt": "forge fmt",
+    "fmt:check": "forge fmt --check"
+  },
+  "dependencies": {
+    "ethers": "6.13.4"
+  },
+  "comments": {
+    "ethers": "Pinned exactly, not '^6.13.4'. scripts/serve-frontend.sh copies dist/ethers.umd.min.js into frontend/vendor/ so the DApp runs offline; a floating range could swap that bundle underneath a working demo. The lockfile is committed for the same reason.",
+    "no-bundler": "The frontend is deliberately buildless: plain HTML/CSS/JS served statically, exactly as the specification requires. npm exists here only to vendor ethers and to alias the shell scripts."
+  }
+}

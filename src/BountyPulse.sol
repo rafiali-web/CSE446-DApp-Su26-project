@@ -35,7 +35,7 @@ pragma solidity ^0.8.20;
  *        carry structured data the DApp can decode and display.
  *      - Every state change emits an event, so the DApp can stay in sync purely
  *        from logs with no polling and no page reloads.
- *
+ *        checking the logs...... 
  * @dev ACCOUNTING INVARIANT
  *      address(this).balance >= totalEscrowed + totalWithdrawable
  *      Held escrow and credited-but-unclaimed balances are always fully backed.

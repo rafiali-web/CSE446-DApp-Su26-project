@@ -1,55 +1,4 @@
-# BountyPulse — Decentralized Micro-Bounty & Escrow
-
-> **This commit merges a complete implementation over the starter scaffold.**
->
-> This repository previously held an early scaffold: a partial contract, placeholder test and
-> deploy files, and a frontend parked under `script/`. It could not be built — there was no
-> `foundry.toml` and no `.gitignore`. Everything here has been replaced with the finished
-> project: a complete, tested contract, a working deployment script, a rebuilt frontend on its
-> own design system, and the tooling to run all of it end to end.
->
-> **The previous state is preserved in this repository's history at commit `106d8f2`**
-> (`git show 106d8f2`), so nothing has been lost.
-
-### What changed
-
-| Area | Before | After |
-|---|---|---|
-| `src/BountyPulse.sol` | 334 lines, partial | 890 lines, complete and tested |
-| `test/BountyPulse.t.sol` | 2-line comment stub | 83 tests passing (unit, security, 5 fuzz) |
-| `script/` (deploy) | `DeployBountyPulse.s.sol`, a 1-line stub | `Deploy.s.sol`, working: deploys, verifies on-chain, writes a deployment record |
-| Frontend location | `script/frontend/` — misplaced, `script/` is Forge's directory | `frontend/` |
-| Frontend | Starter `app.js` / `index.html` / `style.css` | Role-based DApp: live event sync, off-chain sorting, two-step IPFS pipeline |
-| Design | Single `style.css` | `frontend/design-system/` — token sheet with OKLCH ramps, component layer, and `theme.json` |
-| `foundry.toml` | absent, so the project could not build | added: solc 0.8.20, optimizer, remappings, fs permissions |
-| `.gitignore` | absent | added: secrets, build output, generated files |
-| `setup.sh` | absent | added: idempotent, no-sudo environment setup |
-| `scripts/` | absent | `start-anvil.sh`, `deploy-local.sh`, `serve-frontend.sh`, `gen-pinata-config.sh` |
-| `abi/` | empty directory | populated by `deploy-local.sh`, which writes `abi/BountyPulse.json` |
-| `images/` | absent | demo screenshot directory wired into the Demo section below |
-
-The `abi/` directory was kept and given a purpose rather than removed: the deploy script now
-emits the compiled ABI there on every run, which is clearly what it was created for.
-
----
-
-A Web3 replacement for centralized freelance platforms. Clients post bounties, freelancers
-quote on them, ETH is locked in on-chain escrow, and funds are released only when work is
-approved — or redistributed by an Arbiter when it is disputed. The platform takes a **2%**
-protocol fee and maintains an on-chain reputation score per freelancer.
-
-Heavy data (avatars, briefs, delivered work) is pinned to **IPFS via Pinata**; only the
-resulting **CID** is written on-chain. The chain stores and verifies; it does not warehouse.
-
-| | |
-|---|---|
-| **Contract** | Solidity `^0.8.20`, Foundry (Forge + Anvil) |
-| **Frontend** | HTML / CSS / vanilla JavaScript, Ethers.js v6, no build step |
-| **Storage** | IPFS via the Pinata REST API |
-| **Chain** | Local Anvil, chain id `31337` |
-| **Tests** | 83 passing (unit + fuzz), `forge test` |
-
----
+# BountyPulse - Decentralized Micro-Bounty & Escrow
 
 ## Table of contents
 
@@ -1076,35 +1025,5 @@ BountyPlus/
 └── README.md
 ```
 
-Generated and ignored, never committed: `out/`, `cache/`, `broadcast/`, `lib/`,
-`node_modules/`, `.env`, `deployments/*.local.json`, `frontend/js/contract-address.js`,
-`frontend/js/pinata-config.js`, `frontend/vendor/`, `*.bak`, and `BountyPlus.pdf`.
 
----
 
-## Collaborator fork
-
-This project is also merged into a collaborator's fork at
-`Collaborators_forked/BountyPulse`, which is a **separate git repository** with its own history
-and its own `origin` (`https://github.com/Ahsaniat/BountyPulse.git`). It is git-ignored from
-this repository — committing it here would record a gitlink that breaks a plain clone — and is
-worked on in place:
-
-```bash
-git -C Collaborators_forked/BountyPulse status
-git -C Collaborators_forked/BountyPulse log --oneline -3
-```
-
-That fork began as a starter scaffold: a partial 334-line contract, a two-line test stub, a
-one-line deploy stub, a frontend misplaced under `script/`, and no `foundry.toml` or
-`.gitignore`, so it could not build at all. The complete implementation in this repository was
-merged over it, preserving the fork's own history — their originals remain at commit
-`106d8f2`. The fork's `README.md` carries the full what-changed table.
-
-The two repositories hold the same project. This one is the source of truth.
-
----
-
-## License
-
-MIT. Built as a local development and evaluation project — **not audited, not for mainnet.**

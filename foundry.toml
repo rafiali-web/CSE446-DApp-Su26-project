@@ -1,0 +1,66 @@
+# ==============================================================================
+# Foundry configuration — BountyPulse
+# https://book.getfoundry.sh/reference/config/
+# ==============================================================================
+
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+test = "test"
+script = "script"
+
+# Pinned to the version named in the specification (^0.8.20). Pinning rather
+# than floating keeps bytecode reproducible: the same source always yields the
+# same artifact hash, which matters for verification and for gas comparisons.
+solc_version = "0.8.20"
+evm_version = "paris"
+
+# The optimizer is ON because this contract is deploy-once / call-many. 200 runs
+# is the standard balance: it favours cheaper runtime calls over a marginally
+# cheaper deployment, which is the correct trade-off for an escrow contract that
+# will service many bids, fundings and claims over its lifetime.
+optimizer = true
+optimizer_runs = 200
+
+# Verbosity 2 prints console logs from passing tests too, which is what the
+# assignment's "show terminal output" checkpoints need.
+verbosity = 2
+
+# Explicit remappings. This MUST live inside [profile.default]: in TOML a bare
+# key belongs to the table declared above it, so placing it after [fuzz] or
+# [invariant] would silently attach it to the wrong section.
+remappings = [
+    "forge-std/=lib/forge-std/src/",
+]
+
+# Filesystem access is DENIED by default in Foundry and is opened here for
+# exactly one directory: script/Deploy.s.sol writes the deployment record to
+# ./deployments. Nothing else in the repo (and nothing outside it) is reachable.
+fs_permissions = [{access = "read-write", path = "./deployments"}]
+
+# Deterministic fuzzing: a fixed seed means a failing fuzz case is reproducible
+# by a reviewer on another machine. Raise `runs` in CI for deeper coverage.
+[fuzz]
+runs = 512
+max_test_rejects = 65536
+seed = "0x424f554e545950554c5345"   # "BOUNTYPULSE"
+
+[invariant]
+runs = 128
+depth = 32
+fail_on_revert = false
+
+# `forge fmt` settings — one canonical style, no bikeshedding in review.
+[fmt]
+line_length = 118
+tab_width = 4
+bracket_spacing = false
+int_types = "long"
+quote_style = "double"
+number_underscore = "thousands"
+multiline_func_header = "attributes_first"
+
+# Local Anvil endpoint, referenced as `--rpc-url anvil`.
+[rpc_endpoints]
+anvil = "http://127.0.0.1:8545"

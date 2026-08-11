@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>BountyPulse - Decentralized Micro-Bounty &amp; Escrow</title>
+  <meta name="description"
+        content="Decentralized micro-bounty platform with on-chain escrow, IPFS storage and arbitrated disputes." />
+
+  <!-- Lucide "activity" on the 24x24 grid, drawn as stroke. No emoji anywhere. -->
+  <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b68235' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2'/%3E%3C/svg%3E" />
+
+  <!--
+    ONE stylesheet. The Classical design system carries every token, every
+    component and every interaction state; nothing on this page restyles them.
+    Fonts are imported at the top of it, with real fallback stacks so the page
+    still sets in a serif offline.
+  -->
+  <link rel="stylesheet" href="design-system/styles.css" />
+</head>
+<body>
+  <!--
+    ==========================================================================
+    NOTE ON RELOADS
+    This application never calls window.location.reload(). Every visible change
+    is driven either by an explicit user action or by an Ethers.js contract
+    event listener (see js/app.js > EventSync). Checkpoint 5 depends on it.
+    ==========================================================================
+  -->
+
+  <header class="nav">
+    <a class="nav-brand" href="#" aria-label="BountyPulse home">
+      <span class="mark" id="brand-mark" aria-hidden="true"></span>
+      <span>BountyPulse</span>
+    </a>
+
+    <span id="network-badge" class="tag tag-neutral" title="Connected network">Not connected</span>
+    <span id="block-badge" class="tag tag-outline hidden" title="Latest block seen by the DApp">#0</span>
+
+    <div class="nav-spacer"></div>
+
+    <div id="account-chip" class="account hidden">
+      <figure class="plate plate-inline account-avatar" aria-hidden="true">
+        <img id="account-avatar" alt="" width="36" height="36" />
+      </figure>
+      <div class="account-id">
+        <span id="account-name" class="account-name">Unregistered</span>
+        <span class="row" style="gap: var(--space-2)">
+          <span id="account-role" class="tag tag-neutral">No role</span>
+          <span id="account-reputation" class="tag tag-accent hidden">100</span>
+          <code id="account-address" class="address" title="Active MetaMask account">0x0000...0000</code>
+        </span>
+      </div>
+    </div>
+
+    <button id="btn-connect" class="btn btn-primary" type="button">Connect Wallet</button>
+  </header>
+
+  <!-- ===================== Global banners ===================== -->
+  <div id="banner-no-wallet" class="card banner banner-strong hidden" role="alert">
+    <p>
+      <strong>No Ethereum wallet detected.</strong>
+      Install <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">MetaMask</a>,
+      then reopen this page.
+    </p>
+  </div>
+
+  <div id="banner-wrong-network" class="card banner banner-strong hidden" role="alert">
+    <p>
+      <strong>Wrong network.</strong>
+      BountyPulse runs on the local Anvil chain, <code>chain id 31337</code>.
+      This wallet is on <code id="current-chain-id">?</code>.
+    </p>
+    <button id="btn-switch-network" class="btn btn-primary btn-sm" type="button">Switch to Anvil</button>
+  </div>
+
+  <div id="banner-no-contract" class="card banner hidden" role="alert">
+    <p>
+      <strong>Contract address unknown.</strong>
+      Run <code>./scripts/deploy-local.sh</code> to generate it automatically, or paste it here.
+    </p>
+    <form id="form-address" class="banner-form" autocomplete="off">
+      <label class="sr-only" for="input-contract-address">Contract address</label>
+      <input id="input-contract-address" class="input input-mono" type="text"
+             placeholder="0x..." pattern="0x[0-9a-fA-F]{40}" required />
+      <button class="btn btn-secondary btn-sm" type="submit">Use address</button>
+    </form>
+  </div>
+
+  <main class="layout">
+    <div class="layout-main">
+
+      <!-- ===================== Disconnected ===================== -->
+      <section id="view-disconnected" class="view">
+        <article class="card">
+          <p class="card-kicker">Decentralized micro-bounty and escrow</p>
+          <h1 class="display">Escrowed work, settled on-chain.</h1>
+          <hr class="hr hr-tight" />
+          <div class="columns-2">
+            <p class="lead">
+              Post a bounty, receive quotes, lock ETH in escrow and release it only when the work
+              is approved. A 2% protocol fee, on-chain reputation, and an arbiter for disputes.
+            </p>
+            <p class="prose">
+              Files live on IPFS and only the content identifier ever touches the chain, so a two
+              megabyte attachment costs one HTTP request and roughly forty-six bytes of storage
+              instead of millions of gas. Sorting and filtering happen in this browser, on data
+              already fetched by a single free <code>view</code> call.
+            </p>
+          </div>
+
+          <ol class="contents">
+            <li><span>Connect MetaMask on chain 31337.</span></li>
+            <li><span>Register as a Client or a Freelancer. One address, one account, one role.</span></li>
+            <li><span>Bid, escrow, deliver, claim.</span></li>
+          </ol>
+
+          <div class="card-actions">
+            <button id="btn-connect-hero" class="btn btn-primary btn-lg" type="button">
+              Connect Wallet
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- ===================== Registration ===================== -->
+      <section id="view-register" class="view hidden">
+        <article class="card">
+          <p class="card-kicker">Registration</p>
+          <h2 class="card-title">Create your on-chain profile</h2>
+          <p class="card-body">
+            This wallet is not in the registry yet. Registration is permanent:
+            <strong>one address, one account, one role.</strong>
+          </p>
+          <hr class="hr hr-tight" />
+
+          <form id="form-register" autocomplete="off">
+            <div class="field">
+              <label for="reg-name">Display name</label>
+              <input id="reg-name" class="input" type="text" maxlength="64" required
+                     placeholder="Ada Lovelace" />
+              <p class="hint">Up to 64 characters. Stored on-chain.</p>
+            </div>
+
+            <fieldset class="field">
+              <legend>Role</legend>
+              <div class="radio-grid">
+                <label class="radio">
+                  <input type="radio" name="reg-role" value="1" checked />
+                  <span class="dot" aria-hidden="true"></span>
+                  <span class="radio-body">
+                    <span>Client</span>
+                    <span class="muted small">Post bounties and fund escrow.</span>
+                  </span>
+                </label>
+                <label class="radio">
+                  <input type="radio" name="reg-role" value="2" />
+                  <span class="dot" aria-hidden="true"></span>
+                  <span class="radio-body">
+                    <span>Freelancer</span>
+                    <span class="muted small">Bid on work. Starts at 100 reputation.</span>
+                  </span>
+                </label>
+              </div>
+              <p class="hint">
+                The Arbiter role is not selectable: it is fixed to the contract deployer.
+              </p>
+            </fieldset>
+
+            <div class="field">
+              <label for="reg-avatar">Profile avatar</label>
+              <input id="reg-avatar" class="input" type="file" accept="image/*" required />
+              <p class="hint">
+                Step one, the image is pinned to IPFS via Pinata.
+                Step two, only the returned CID is written on-chain.
+              </p>
+              <figure id="reg-avatar-preview" class="plate hidden" style="max-width: 14rem">
+                <img alt="Avatar preview" />
+                <figcaption><code></code></figcaption>
+              </figure>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn btn-primary" type="submit">Pin avatar and register</button>
+            </div>
+          </form>
+        </article>
+      </section>
+
+      <!-- ===================== Dashboards ===================== -->
+      <section id="view-dashboard" class="view hidden">
+
+        <!-- ---------- CLIENT ---------- -->
+        <div id="panel-client" class="hidden">
+          <article class="card">
+            <p class="card-kicker">New bounty</p>
+            <h2 class="card-title">Post a bounty</h2>
+            <p class="card-body">
+              The brief is pinned to IPFS as JSON; the chain stores the CID and your
+              maximum budget. No ETH moves until you accept a bid.
+            </p>
+            <hr class="hr hr-tight" />
+            <form id="form-post-bounty" autocomplete="off">
+              <div class="field">
+                <label for="bounty-title">Title</label>
+                <input id="bounty-title" class="input" type="text" required maxlength="120"
+                       placeholder="Build a Solidity unit-test suite" />
+              </div>
+              <div class="field">
+                <label for="bounty-description">Description</label>
+                <textarea id="bounty-description" class="input" rows="4" required
+                          placeholder="Scope, acceptance criteria, deadline"></textarea>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="bounty-budget">Max budget (ETH)</label>
+                  <input id="bounty-budget" class="input" type="text" inputmode="decimal" required
+                         placeholder="1.5" />
+                  <p class="hint">Converted to wei on submission. Bids above this are rejected on-chain.</p>
+                </div>
+                <div class="field">
+                  <label for="bounty-attachment">Attachment (optional)</label>
+                  <input id="bounty-attachment" class="input" type="file" />
+                  <p class="hint">Spec sheet, mockup, dataset. Pinned alongside the brief.</p>
+                </div>
+              </div>
+              <div class="card-actions">
+                <button class="btn btn-primary" type="submit">Pin brief and post bounty</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Client</p>
+                <h2 class="card-title">My bounties</h2>
+                <p class="muted small">Review quotes, fund escrow, approve or dispute delivered work.</p>
+              </div>
+              <span id="client-bounty-count" class="tag tag-outline">0</span>
+            </div>
+            <div id="client-bounties" class="stack"></div>
+          </article>
+        </div>
+
+        <!-- ---------- FREELANCER ---------- -->
+        <div id="panel-freelancer" class="hidden">
+          <article class="card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Freelancer</p>
+                <h2 class="card-title">My awarded work</h2>
+                <p class="muted small">Bounties where your quote was accepted and ETH is in escrow.</p>
+              </div>
+              <span id="freelancer-awarded-count" class="tag tag-outline">0</span>
+            </div>
+            <div id="freelancer-awarded" class="stack"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Marketplace</p>
+                <h2 class="card-title">Open bounty feed</h2>
+                <p class="muted small">Live from the contract's <code>view</code> functions.</p>
+              </div>
+              <span id="feed-count" class="tag tag-outline">0</span>
+            </div>
+
+            <!--
+              GAS-OPTIMIZATION DEMONSTRATION (spec 3.2)
+              These controls never touch the chain. The full bounty array arrives
+              from one eth_call, and every sort/filter below runs in JavaScript.
+              Sorting on-chain would burn real gas on a read that is otherwise free.
+            -->
+            <div class="toolbar">
+              <div class="field">
+                <label for="feed-sort">Sort</label>
+                <select id="feed-sort" class="input">
+                  <option value="budget-desc">Highest budget</option>
+                  <option value="budget-asc">Lowest budget</option>
+                  <option value="newest">Newest first</option>
+                  <option value="oldest">Oldest first</option>
+                  <option value="bids-desc">Most bids</option>
+                </select>
+              </div>
+
+              <!--
+                A segmented control built from native radios. `change` bubbles
+                from the input to this container, so the same handler that read a
+                <select> reads this with no extra script.
+              -->
+              <fieldset class="field">
+                <legend>Status</legend>
+                <div id="feed-status" class="seg">
+                  <label class="seg-opt">
+                    <input type="radio" name="feed-status" value="open" checked />
+                    <span>Open only</span>
+                  </label>
+                  <label class="seg-opt">
+                    <input type="radio" name="feed-status" value="all" />
+                    <span>All</span>
+                  </label>
+                  <label class="seg-opt">
+                    <input type="radio" name="feed-status" value="mine" />
+                    <span>I have bid</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="field toolbar-grow">
+                <label for="feed-search">Search</label>
+                <input id="feed-search" class="input" type="search"
+                       placeholder="title, description or client" />
+              </div>
+
+              <span class="toolbar-note" title="Sorting and filtering happen in the browser, not on-chain">
+                off-chain, 0 gas
+              </span>
+            </div>
+
+            <div id="feed" class="stack"></div>
+          </article>
+        </div>
+
+        <!-- ---------- ARBITER ---------- -->
+        <div id="panel-arbiter" class="hidden">
+          <article class="card">
+            <p class="card-kicker">Arbiter</p>
+            <h2 class="card-title">Platform overview</h2>
+            <p class="card-body">
+              You are the Arbiter: you resolve disputes and collect the 2% protocol fee.
+            </p>
+            <div id="arbiter-stats"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Adjudication</p>
+                <h2 class="card-title">Open disputes</h2>
+                <p class="muted small">Your verdict is final and moves the escrowed ETH immediately.</p>
+              </div>
+              <span id="dispute-count" class="tag tag-outline">0</span>
+            </div>
+            <div id="arbiter-disputes" class="stack"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">Registry</p>
+                <h2 class="card-title">All bounties</h2>
+                <p class="muted small">Full registry, sorted client-side.</p>
+              </div>
+              <span id="arbiter-bounty-count" class="tag tag-outline">0</span>
+            </div>
+            <div id="arbiter-bounties" class="stack"></div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===================== Sidebar ===================== -->
+    <aside class="layout-side">
+      <!-- Unclaimed earnings tracker (spec 3.4) -->
+      <section id="earnings-card" class="card elev-sm hidden">
+        <p class="card-kicker">Unclaimed earnings</p>
+        <p id="earnings-amount" class="metric">0.0 ETH</p>
+        <p id="earnings-note" class="muted small">
+          Released funds are credited here and withdrawn on demand (pull payment).
+        </p>
+        <button id="btn-claim" class="btn btn-primary btn-block" type="button" disabled>
+          Claim funds
+        </button>
+      </section>
+
+      <section class="card">
+        <p class="card-kicker">IPFS / Pinata</p>
+        <p class="muted small">
+          Uploads go straight from this browser to the Pinata API, so the credential is
+          visible client-side whichever source it comes from. Resolution order is
+          localStorage first, then the credential bridged out of <code>.env</code> by
+          <code>scripts/gen-pinata-config.sh</code>.
+        </p>
+        <form id="form-pinata" autocomplete="off">
+          <div class="field">
+            <label for="pinata-jwt" class="sr-only">Pinata JWT</label>
+            <input id="pinata-jwt" class="input input-mono" type="password"
+                   placeholder="PINATA_JWT (overrides .env)" autocomplete="off" />
+          </div>
+
+          <details class="details">
+            <summary>Use the legacy API key and secret instead</summary>
+            <p class="hint">
+              Only needed if your account has no JWT. When a JWT is present it always wins.
+            </p>
+            <div class="field">
+              <label for="pinata-api-key" class="sr-only">Pinata API key</label>
+              <input id="pinata-api-key" class="input input-mono" type="password"
+                     placeholder="PINATA_API_KEY" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="pinata-api-secret" class="sr-only">Pinata API secret</label>
+              <input id="pinata-api-secret" class="input input-mono" type="password"
+                     placeholder="PINATA_API_SECRET" autocomplete="off" />
+            </div>
+          </details>
+
+          <div class="card-actions">
+            <button class="btn btn-primary btn-sm" type="submit">Save</button>
+            <button id="btn-test-pinata" class="btn btn-secondary btn-sm" type="button">Test</button>
+            <button id="btn-clear-pinata" class="btn btn-ghost btn-sm" type="button">Clear</button>
+          </div>
+        </form>
+        <p id="pinata-status" class="status">Resolving credential...</p>
+      </section>
+
+      <!-- Live event log (spec 3.5) -->
+      <section class="card">
+        <div class="card-head">
+          <p class="card-kicker" style="margin: 0">Live activity</p>
+          <span id="event-indicator" class="pulse" title="Event listener status"></span>
+        </div>
+        <p class="muted small">
+          Streamed from <code>contract.on(...)</code>. The page never reloads.
+        </p>
+        <ol id="activity-log" class="activity"></ol>
+      </section>
+
+      <section class="card">
+        <p class="card-kicker">Deployment</p>
+        <dl class="kv">
+          <dt>Contract</dt><dd><code id="info-address">-</code></dd>
+          <dt>Chain</dt><dd><code id="info-chain">-</code></dd>
+          <dt>Arbiter</dt><dd><code id="info-arbiter">-</code></dd>
+          <dt>Fee</dt><dd>2% (200 bps)</dd>
+        </dl>
+      </section>
+    </aside>
+  </main>
+
+  <div id="toasts" class="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <div id="busy" class="dialog-backdrop hidden" role="status" aria-live="assertive">
+    <div class="dialog elev-lg">
+      <div class="row">
+        <span class="spinner" aria-hidden="true"></span>
+        <span id="busy-text" class="dialog-title" style="margin: 0">Working...</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>BountyPulse, local development build, chain 31337</span>
+    <span class="muted">Escrow is real ETH on this chain. Never point this build at mainnet.</span>
+  </footer>
+
+  <!--
+    Load order matters:
+      pinata-config.js     generated by scripts/gen-pinata-config.sh from .env.
+                           Git-ignored, 600, and absent until that script runs -
+                           the onerror keeps the page going without it.
+      contract-address.js  generated by scripts/deploy-local.sh (also absent
+                           before the first deploy)
+      icons.js             vendored Lucide geometry
+      contract.js          ABI, enums, address resolution
+      ipfsHelper.js        two-step Pinata pipeline, credential resolution
+      app.js               wallet, rendering, event sync (loads ethers itself)
+  -->
+  <script src="js/pinata-config.js" onerror="window.__pinataConfigMissing = true"></script>
+  <script src="js/contract-address.js" onerror="window.__deploymentFileMissing = true"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/contract.js"></script>
+  <script src="js/ipfsHelper.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
